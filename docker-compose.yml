@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: nestjs-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mysql
+    environment:
+      - DATABASE_TYPE=mysql
+      - DATABASE_HOST=mysql
+      - DATABASE_PORT=3306
+      - DATABASE_USERNAME=root
+      - DATABASE_PASSWORD=user
+      - DATABASE_NAME=url_shortening
+      - DATABASE_SYNCHRONIZE=true
+      - DATABASE_LOGGING=true
+    volumes:
+      - .:/usr/src/app
+    command: npm run start:prod
+
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: user
+      MYSQL_DATABASE: url_shortening
+      MYSQL_USER: root
+      MYSQL_PASSWORD: user
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
